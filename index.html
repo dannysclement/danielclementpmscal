@@ -120,11 +120,17 @@ button:hover {
                 <label for="cash-at-hand">Cash at Hand (₦)</label>
                 <input type="number" id="cash-at-hand" name="cash-at-hand" step="0.01" required>
             </div>
+            <div class="form-group">
+                <label for="total-droppings">Total Droppings (₦)</label>
+                <input type="number" id="total-droppings" name="total-droppings" step="0.01" required>
+            </div>
             <button type="button" onclick="calculateTotal()">Calculate</button>
         </form>
         <div class="result">
             <h2>Result</h2>
-            <p id="result"></p>
+            <p id="total-liters"></p>
+            <p id="total-sales"></p>
+            <p id="total-revenue"></p>
             <p id="status"></p>
         </div>
     </div>
@@ -137,23 +143,27 @@ button:hover {
     const expense = parseFloat(document.getElementById('expense').value);
     const pos = parseFloat(document.getElementById('pos').value);
     const cashAtHand = parseFloat(document.getElementById('cash-at-hand').value);
+    const totalDroppings = parseFloat(document.getElementById('total-droppings').value);
 
-    if (isNaN(closeMeter) || isNaN(openMeter) || isNaN(pricePerLiter) || isNaN(expense) || isNaN(pos) || isNaN(cashAtHand)) {
+    if (isNaN(closeMeter) || isNaN(openMeter) || isNaN(pricePerLiter) || isNaN(expense) || isNaN(pos) || isNaN(cashAtHand) || isNaN(totalDroppings)) {
         alert('Please fill in all fields');
         return;
     }
 
     const totalLiters = closeMeter - openMeter;
     const totalSales = totalLiters * pricePerLiter;
-    const totalRevenue = totalSales + pos + cashAtHand - expense;
+    const totalRevenue = totalSales + pos - totalDroppings;
+    const finalBalance = totalRevenue + cashAtHand - expense;
 
-    document.getElementById('result').textContent = `Total Revenue: ₦${totalRevenue.toFixed(2)}`;
+    document.getElementById('total-liters').textContent = `Total Liters: ${totalLiters.toFixed(2)} L`;
+    document.getElementById('total-sales').textContent = `Total Sales: ₦${totalSales.toFixed(2)}`;
+    document.getElementById('total-revenue').textContent = `Total Revenue: ₦${finalBalance.toFixed(2)}`;
 
     let statusMessage;
-    if (totalRevenue > 0) {
+    if (finalBalance > 0) {
         statusMessage = "Profit";
         document.getElementById('status').style.color = "green";
-    } else if (totalRevenue < 0) {
+    } else if (finalBalance < 0) {
         statusMessage = "Loss";
         document.getElementById('status').style.color = "red";
     } else {
